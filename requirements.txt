@@ -1,0 +1,2 @@
+dgim==0.2.0
+streamlit==1.10.0
