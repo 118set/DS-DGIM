@@ -1,5 +1,6 @@
 import csv
 import streamlit as st
+import pandas as pd
 from dgim import Dgim
 from datetime import datetime
 from collections import Counter
@@ -73,6 +74,21 @@ def draw_chart(results, dgim_res):
                 }
             }
         }, use_container_width=True)
+
+    table_values = {
+        'Actual': results,
+        'DGIM': dgim_res,
+        'Error': [abs(results[i] - dgim_res[i]) / results[i] for i in range(10)],
+        # 'Test': [False] * 10
+    }
+    df = pd.DataFrame(table_values)
+    df = df.transpose()
+    df.columns = list(range(1, 11))
+
+    df_styler = df.style.format('{:.0f}', subset=pd.IndexSlice[['Actual', 'DGIM'], :]) \
+        .format('{:.2f}', subset=pd.IndexSlice[['Error'], :])
+
+    st.table(df_styler)
 
 @st.cache(hash_funcs={list: lambda _: None})
 def prepare_data():
